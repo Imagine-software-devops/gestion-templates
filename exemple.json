@@ -1,0 +1,22 @@
+{
+    "datas" : {
+        "app-name" : "app-name",
+        "where-to-install" : "PC/Server",
+        "json-config-file" : "/bin/documents....",
+        "server-datas" : {
+                "region": "us-east-1",
+                "ImageId": "ami-xxxxxxxx",   
+                "InstanceType": "t2.micro",  
+                "KeyName": "your-key-pair",
+                "key_path" : "key_path",  
+                "SecurityGroupIds": ["sg-xxxxxxxx"],  
+                "MinCount": 1,
+                "MaxCount": 1   
+        },
+        "whitch-language" : ["Python", "Bash","angularjs","vuejs","symfony","C#","Java","PHP","C++","C","HTML","CSS","Javascript","React","Nodejs","Laravel","Spring","Express","Bootstrap","Swift","React-Native"],
+        "docker" : "yes/no",
+        "vscode" : "yes/no",
+        "vscode-config" : "yes/no",
+        "vscode-config-file" : "/bin/documents...."
+    }
+}

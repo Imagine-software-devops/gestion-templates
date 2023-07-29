@@ -63,7 +63,6 @@ def execute_commands(ssh_client):
         print(stderr.read().decode())
 
     ssh_client.close()
-
 if __name__ == '__main__':
     create_ec2_instance()
     key_path = '/path/to/your-key.pem'

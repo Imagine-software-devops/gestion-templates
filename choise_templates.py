@@ -12,7 +12,7 @@ def main_choice() :
         choices = inquirer.prompt(choix, theme=GreenPassion())
         return choices
 
-def language_choice( ) :
+def language_choice() :
         choix = [
         inquirer.Checkbox(
             "actions",
@@ -33,6 +33,40 @@ def docker_choice():
     ]
         choices = inquirer.prompt(choix, theme=GreenPassion())
         return choices
+
+def visual_studio_code_install():
+        choix = [
+              inquirer.Checkbox(
+                          "actions",
+            message="Voulez vous installer visual studio code ?",
+            choices=["oui", "non"],
+
+              )
+       ]
+        choices = inquirer.prompt(choix, theme=GreenPassion())
+        return choices
+
+def visual_studio_code_extension():
+        choix = [
+        inquirer.Checkbox(
+            "actions",
+            message="Voulez vous importer votre gonfig visual ?",
+            choices=["oui", "non"],
+        ),
+    ]
+        choices = inquirer.prompt(choix, theme=GreenPassion())
+        return choices
+
+def visual_config():
+        choix = [
+        inquirer.Text(
+            "actions",
+            message="lien de votre config visual studio code",
+        ),
+    ]
+        choices = inquirer.prompt(choix, theme=GreenPassion())
+        return choices
+       
 
 def git_link():
         choix = [
