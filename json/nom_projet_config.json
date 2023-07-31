@@ -1,0 +1,26 @@
+{
+    "nom module":{
+        "nom-menu-general" : "Nom menu general",
+        "action-generales":{
+            "1": "creer",
+            "2": "modifier"
+        },
+        "liste-des-actions-rapides":{
+            "1": "creer : C^A",
+            "2": "modifier : C^M"
+        },
+        "nom fonction" : "nom fonction"
+    },
+        "entrées" : {
+            "entrée-possible" : "données 1"
+        },
+        "sortie" : {
+            "sortie-possible" : "retour-console"
+        },
+        "erreur" : {
+            "erreur-possible" : "retour-console"
+        }
+}
+
+
+
