@@ -1,41 +1,38 @@
 {
-    "templates-main":{
-        "nom-menu-general" : "Creation de templates",
-        "action-generales":{
-            "1" : "Creation de templates",
-            "2" : "Retour au menu principal"
-        },
-        "liste-des-actions-rapides":{
-            "1" : "Creation de templates",
-            "2" : "Retour au menu principal"
+    "nom module":{
+        "name" : "templates",
+        "actions":[
+            {
+                "name" : "functionName",
+                "params" : {
+                    "app-name" : "app-name",
+                    "where-to-install" : "PC/Server",
+                    "json-config-file" : "/bin/documents....",
+                    "server-datas" : {
+                            "region": "us-east-1",
+                            "ImageId": "ami-xxxxxxxx",  
+                            "count": 1, 
+                            "InstanceType": "t2.micro",  
+                            "KeyName": "your-key-pair",
+                            "key_path" : "key_path",  
+                            "SecurityGroupIds": ["sg-xxxxxxxx"], 
+                            "SubnetId": "subnet-xxxxxxxx",
+                            "MinCount": 1,
+                            "MaxCount": 1   
+                    },
+                    "which-language" : ["Python", "Bash","angularjs","vuejs","symfony","C#","Java","PHP","C++","C","HTML","CSS","Javascript","React","Nodejs","Laravel","Spring","Express","Bootstrap","Swift","React-Native"],
+                    "docker" : "yes/no",
+                    "vscode" : "yes/no",
+                    "vscode-config" : "yes/no",
+                    "vscode-config-file" : "/bin/documents...."
+                },
+                "return" : "return-console",
+                "racourcis" : "racourcis"
+            }   
+        ],
+        "config" : {
+            "path" : "path",
+            "name" : "name"
         }
-    },
-        "entrées" : {
-            "app-name" : "app-name",
-            "where-to-install" : "PC/Server",
-            "json-config-file" : "/bin/documents....",
-            "server-datas" : {
-                    "region": "us-east-1",
-                    "ImageId": "ami-xxxxxxxx",  
-                    "count": 1, 
-                    "InstanceType": "t2.micro",  
-                    "KeyName": "your-key-pair",
-                    "key_path" : "key_path",  
-                    "SecurityGroupIds": ["sg-xxxxxxxx"], 
-                    "SubnetId": "subnet-xxxxxxxx",
-                    "MinCount": 1,
-                    "MaxCount": 1   
-            },
-            "which-language" : ["Python", "Bash","angularjs","vuejs","symfony","C#","Java","PHP","C++","C","HTML","CSS","Javascript","React","Nodejs","Laravel","Spring","Express","Bootstrap","Swift","React-Native"],
-            "docker" : "yes/no",
-            "vscode" : "yes/no",
-            "vscode-config" : "yes/no",
-            "vscode-config-file" : "/bin/documents...."
-        },
-        "sortie" : {
-            "sortie-possible" : "retour-console"
-        },
-        "erreur" : {
-            "erreur-possible" : "retour-console"
-        }
+    }
 }
