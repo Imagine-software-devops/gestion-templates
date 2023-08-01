@@ -1,153 +1,76 @@
-import boto3
-import paramiko
-import time
-import json
+from aws_cdk import (
+    core,
+    aws_ec2 as ec2
+)
 
-region = 'eu-west-3'
-client = boto3.client('ec2')
+class MyEC2Stack(core.Stack):
 
-def create_vpc():
-    ec2_client = boto3.client('ec2')
-    response = ec2_client.create_vpc(
-        CidrBlock='10.66.0.0/27',
-    )
-    print(response)
-    return response
+    def __init__(self, scope: core.Construct, id: str, **kwargs) -> None:
+        super().__init__(scope, id, **kwargs)
 
-
-def create_subnet(vpc):
-    ec2_client = boto3.client('ec2')
-    CidrBlocks = ['10.66.0.0/28','10.66.0.17/28']
-    prout = vpc.get('Vpc', {}).get('VpcId')
-    data = []
-    print(prout)
-    for CidrBlock in CidrBlocks:
-        response = ec2_client.create_subnet(
-            CidrBlock=CidrBlock,
-            VpcId=prout,
+        # Create a VPC
+        vpc = ec2.Vpc(
+            self, "MyVpc",
+            cidr="10.66.0.0/27"
         )
-        print(response)
-        
-    
-    return response
 
-def create_route_table(vpc,subnet,gateway):
-    subid = subnet.get('Subnet', {}).get('SubnetId')
-    vpcid = vpc.get('Vpc', {}).get('VpcId')
-    gatewayid = gateway.get('InternetGateway', {}).get('InternetGatewayId')
-    CidrBlocks = ['10.66.0.0/28','10.66.0.17/28']
-    response = client.create_route_table(
-        DestinationCidrBlock=CidrBlocks[0],
-        GatewayId=gatewayid,
-    )
-    print(response)
-    
-def create_internet_gateway(vpcid,subid):
-    response = client.create_internet_gateway()
-    internet_gateway_id = response['InternetGateway']['InternetGatewayId']
+        # Create a public subnet
+        public_subnet = ec2.Subnet(
+            self, "PublicSubnet",
+            vpc=vpc,
+            cidr_block="10.66.0.0/28"
+        )
 
-    # Step 2: Attach the internet gateway to your VPC
-    response = client.attach_internet_gateway(
-        InternetGatewayId=internet_gateway_id,
-        VpcId=vpcid,
-    )
-    return response
+        # Create an internet gateway
+        internet_gateway = ec2.CfnInternetGateway(self, "InternetGateway")
 
-def create_network():
-    vpc = create_vpc()
-    subnet = create_subnet(vpc)
-    subid = subnet.get('Subnet', {}).get('SubnetId')
-    prout = vpc.get('Vpc', {}).get('VpcId')
-    gateway = create_internet_gateway(prout,subid)
-    print(gateway)
-    # # route_table = create_route_table(vpc,subnet,gateway)
-    # subid = subnet.get('Subnet', {}).get('SubnetId')
-    # response = client.create_network_interface ( 
-    #      Description='my network interface',
-    # Groups=[
-    #     'sg-06b92c336ed9530d7b',
-    # ],
-    # PrivateIpAddress='10.0.2.17',
-    # SubnetId=subid,
-    # )
-      
-    return vpc,subnet,gateway
+        # Attach the internet gateway to the VPC
+        ec2.CfnVPCGatewayAttachment(
+            self, "VPCGatewayAttachment",
+            vpc_id=vpc.vpc_id,
+            internet_gateway_id=internet_gateway.ref
+        )
 
-def create_ec2_instance():
-    # Set AWS region
-      
+        # Create a route table
+        route_table = ec2.CfnRouteTable(
+            self, "RouteTable",
+            vpc_id=vpc.vpc_id
+        )
 
-    # Create a Boto3 EC2 client
-    ec2_client = boto3.client('ec2', region_name=region)
+        # Create a route to the internet gateway
+        ec2.CfnRoute(
+            self, "DefaultRoute",
+            route_table_id=route_table.ref,
+            destination_cidr_block="0.0.0.0/0",
+            gateway_id=internet_gateway.ref
+        )
 
-    # details de l'instance 
-    instance_params = {
-        'ImageId': 'ami-xxxxxxxx',   # Replace with the desired AMI ID
-        'count': 1, # You can specify more than one instances
-        'InstanceType': 't2.micro',  # Replace with the desired instance type
-        'KeyName': 'your-key-pair',  # Replace with the name of your EC2 key pair
-        'SecurityGroupIds': ['sg-xxxxxxxx'],  # Replace with the desired security group ID(s)
-        'subnetId': 'subnet-xxxxxxxx',  # Replace with the desired subnet ID
-        'MinCount': 1,
-        'MaxCount': 1
-    }
+        # Associate the route table with the public subnet
+        ec2.CfnSubnetRouteTableAssociation(
+            self, "PublicSubnetRouteTableAssociation",
+            subnet_id=public_subnet.subnet_id,
+            route_table_id=route_table.ref
+        )
 
-    # Launch the EC2 instance
-    response = ec2_client.run_instances(**instance_params)
+        # Create an EC2 instance
+        instance = ec2.Instance(
+            self, "MyEC2Instance",
+            instance_type=ec2.InstanceType.of(
+                ec2.InstanceClass.BURSTABLE2, ec2.InstanceSize.MICRO
+            ),
+            machine_image=ec2.MachineImage.latest_amazon_linux(),
+            vpc=vpc,
+            vpc_subnets=ec2.SubnetSelection(subnets=[public_subnet]),
+        )
 
-    # Get the instance ID of the newly created instance
-    instance_id = response['Instances'][0]['InstanceId']
+        # Add a Security Group rule to allow SSH access
+        instance.connections.allow_from_any_ipv4(
+            ec2.Port.tcp(22), description="SSH access"
+        )
 
-    print(f"EC2 instance with ID {instance_id} is being deployed.")
-
-
-def wait_for_ssh(instance_id, key_path):
-    ec2_client = boto3.client('ec2')
-
-    while True:
-        response = ec2_client.describe_instances(InstanceIds=[instance_id])
-        state = response['Reservations'][0]['Instances'][0]['State']['Name']
-        if state == 'running':
-            break
-        time.sleep(5)
-
-    print("Instance is running. Waiting for SSH availability...")
-    time.sleep(30)  # Give some time for SSH to be ready
-
-    # Connect to the instance via SSH
-    instance = response['Reservations'][0]['Instances'][0]
-    public_ip = instance['PublicIpAddress']
-
-    ssh_client = paramiko.SSHClient()
-    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-    # Replace 'your-key.pem' with the path to your private key file
-    key = paramiko.RSAKey.from_private_key_file(key_path)
-    ssh_client.connect(hostname=public_ip, username='ec2-user', pkey=key)
-
-    return ssh_client
-
-def execute_commands_aws(ssh_client,commandsToExecute):
-    for command in commands:
-        print(f"Executing command: {command}")
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        print(stdout.read().decode())
-        print(stderr.read().decode())
-
-    ssh_client.close()
-if __name__ == '__main__':
-
-    network_data = create_network()
-
-
-    # create_ec2_instance()
-    # key_path = '/path/to/your-key.pem'
-    # instance_id = '<your-instance-id>'
-    # ssh_client = wait_for_ssh(instance_id, key_path)
-    
-
-    # with open('nomDuJson') as f:
-    #     commands_data = json.load(f)
-    #     commands_to_execute = commands_data['commands']
-
-    # execute_commands(ssh_client, commands_to_execute)
+app = core.App()
+MyEC2Stack(app, "MyEC2Stack")
+app.synth()
+# pip install aws-cdk-lib
+# cdk init app --language python # If you haven't already initialized a CDK project
+# cdk deploy

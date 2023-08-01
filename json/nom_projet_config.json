@@ -1,18 +1,20 @@
 {
     "nom module":{
-        "nom-menu-general" : "Nom menu general",
+        "nom-menu-general" : "AI-tools",
         "action-generales":{
             "1": "creer",
             "2": "modifier"
         },
         "liste-des-actions-rapides":{
-            "1": "creer : C^A",
-            "2": "modifier : C^M"
+            "1": "4 : quitter le programme"
+            
         },
         "nom fonction" : "nom fonction"
     },
         "entrées" : {
-            "entrée-possible" : "données 1"
+            "API-key" : "clef api gtp3.5",
+            "choix-checkbox" : "Corrige moi le code suivant sans explication/Optimise moi le code suivant sans explication/Commente moi le code suivant sans explication/Quiter le programme",
+            "entrez-votre-code" : "str du code a corriger"
         },
         "sortie" : {
             "sortie-possible" : "retour-console"

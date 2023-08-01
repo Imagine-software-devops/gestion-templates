@@ -1,6 +1,7 @@
 import json
 import os
 from aws_setup import *
+import requests
 
 def install_instance(machine,path,commandsToExecute):
         if machine == "PC":
@@ -11,16 +12,31 @@ def install_instance(machine,path,commandsToExecute):
                 execute_commands(commandsToExecute)
         else:
                 # create the instance in aws 
-                create_ec2_instance()
-                key_path = 'json data'
-                instance_id = 'json data'
-                ssh_client = wait_for_ssh(instance_id, key_path)
-                execute_commands_aws(ssh_client, commandsToExecute)#commands to execute == json data
+                #commands to execute == json data
+                print()
 
 def get_configs(languagedatas):
         # get datas from an s3 bucket or ec2 to get the differents configs file for the installation
         # return a json file with all the datas
-        return json
+        api_url = "enter api url here"
+        try:
+        # Send a GET request to the API endpoint
+                response = requests.get(api_url)
+        # Check if the request was successful (status code 200)
+                if response.status_code == 200:
+                # Parse the JSON response
+                        data = response.json()
+                        print("API Response:")
+                        print(data)
+                else:
+                        print(f"Failed to call API. Status code: {response.status_code}")
+                        print("Error Response:")
+                        print(response.text)
+        except requests.exceptions.RequestException as e:
+                print("Error: Failed to make the API request.")
+                print(e)
+
+
 
 def execute_commands(commandsToExecute):
         # execute the commands
@@ -37,7 +53,6 @@ if __name__ == '__main__':
         # get the json file with all the user entries
         jsonData = json.loads('monfichier.json') 
         sortedDatas =sort_datas(jsonData)
-        install_instance(machine,path,commandsToExecute)
                 
 
         
