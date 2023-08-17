@@ -1,12 +1,13 @@
 {
-    "nom module":{
+    "nom-module":{
         "name" : "templates",
         "actions":[
             {
                 "name" : "functionName",
                 "params" : {
                     "app-name" : "app-name",
-                    "where-to-install" : "PC/Server",
+                    "type-of-install" : "PC/Server",
+                    "path-of-install" : "path",
                     "json-config-file" : "/bin/documents....",
                     "server-datas" : {
                             "region": "us-east-1",
