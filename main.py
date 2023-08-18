@@ -18,7 +18,7 @@ def install_instance(appName,typeOfInstall,path,aws,commandsToExecute,vsInstall,
                 os.system(f'cd' + path)
                 if jsonConfig == 'yes':
                         json_config(jsonConfigPath,platform,path)
-                execute_commands(commandsToExecute,platform)
+                execute_commands(commandsToExecute,platform,appName)
         else:
                 return "aws pas encore pris en charge"
                 call_aws_function()            
@@ -124,13 +124,13 @@ def get_commands(languagesDatas):
         return commandsToExecute
 
 # execute la liste de commandes
-def execute_commands(commandsToExecute):
+def execute_commands(commandsToExecute,platform,app_name):
         # execute the commands
         for commands in commandsToExecute:
                 for command in commands:
+                        toExecute = command.replace("{app-name}", app_name)
                         try :
-                                os.system(command)
-                                return 0
+                                os.system(toExecute)                               
                         except OSError as e:
                                 print("error while executing the command")
                                 return 1,e
@@ -153,9 +153,9 @@ if __name__ == '__main__':
         pth = os.path.abspath("json/front_datas.json")
         with open(pth) as json_file:
                 jsonData = json.load(json_file)
-        sortedDatas =sort_datas(jsonData)       
+        sortedDatas =sort_datas(jsonData)   
         commandsToExecute = get_commands(sortedDatas[4])
-        execute_commands(commandsToExecute)
+        # execute_commands(commandsToExecute,"",sortedDatas[0])
         install_instance(sortedDatas[0],sortedDatas[1],sortedDatas[2],sortedDatas[3],commandsToExecute,sortedDatas[5],sortedDatas[6],sortedDatas[7])
                 
 
