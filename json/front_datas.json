@@ -8,7 +8,8 @@
                     "app-name" : "app-name",
                     "type-of-install" : "PC/Server",
                     "path-of-install" : "path",
-                    "json-config-file" : "/bin/documents....",
+                    "json-config":"yes/no",
+                    "json-config-path" : "/bin/documents....",
                     "server-datas" : {
                             "region": "us-east-1",
                             "ImageId": "ami-xxxxxxxx",  
