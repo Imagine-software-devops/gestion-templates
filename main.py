@@ -7,7 +7,7 @@ import requests
 import platform
 import subprocess
 
-def install_instance(appName,typeOfInstall,path,commandsToExecute,vsInstall,jsonConfig,jsonConfigPath):
+def install_instance(appName,typeOfInstall,path,commandsToExecute,vsInstall,jsonConfig,jsonConfigPath,dockerInstall):
         """
         The function `install_instance` installs an application instance based on the specified parameters,
         including the type of installation, path, commands to execute, Visual Studio installation, JSON
@@ -38,7 +38,8 @@ def install_instance(appName,typeOfInstall,path,commandsToExecute,vsInstall,json
                 execute_and_log(f'cd' + path)
                 if jsonConfig == 'yes':
                         json_npm_config(jsonConfigPath,platform,path)
-                docker_install()
+                if dockerInstall == 'yes':
+                    docker_install(platform)
                 execute_commands(commandsToExecute,platform,appName)
         else:
                 return "aws pas encore pris en charge"
@@ -143,7 +144,6 @@ def vscode_install(plateform, log_file_path):
                         return 1, "Error building VSCode package"
                 else:
                     return 1, "Error installing Manjaro dependencies"
-                # yarn curl 
             if distro.name() == 'Ubuntu':
                 if execute_and_log('sudo apt install git', log_file) and \
                    execute_and_log('sudo apt install make', log_file) and \
@@ -251,9 +251,10 @@ def sort_datas(jsonData):
     vsInstall = jsonData["nom-module"]["actions"][0]["params"]['vscode']
     jsonConfig = jsonData["nom-module"]["actions"][0]["params"]['json-config']
     jsonConfigPath = jsonData["nom-module"]["actions"][0]["params"]['json-config-path']
-    return appName,typeOfInstall,pathOfInstall,awsDatas,languagesDatas,vsInstall,jsonConfig,jsonConfigPath
+    dockerInstall = jsonData["nom-module"]["actions"][0]["params"]['docker-install']
+    return appName,typeOfInstall,pathOfInstall,awsDatas,languagesDatas,vsInstall,jsonConfig,jsonConfigPath,dockerInstall
 
-def docker_install():
+def docker_install(plateform):
     """
     The function `docker_install` installs Docker based on the operating system (Linux, Windows, or
     macOS) using the appropriate package manager or command.
@@ -292,5 +293,4 @@ if __name__ == '__main__':
         sortedDatas =sort_datas(jsonData)   
         commandsToExecute = get_commands(sortedDatas[4])
         with open(logpth, 'a') as log_file:
-                # execute_commands(commandsToExecute,"",sortedDatas[0],logpth)
-                install_instance(sortedDatas[0],sortedDatas[1],sortedDatas[2],sortedDatas[3],commandsToExecute,sortedDatas[5],sortedDatas[6],sortedDatas[7])
+                install_instance(sortedDatas[0],sortedDatas[1],sortedDatas[2],sortedDatas[3],commandsToExecute,sortedDatas[5],sortedDatas[6],sortedDatas[7],sortedDatas[8])
