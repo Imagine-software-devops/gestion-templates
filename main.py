@@ -1,6 +1,7 @@
 import json
 import os
 import boto3
+import distro
 # from aws_setup import *
 import requests
 import platform
@@ -9,15 +10,15 @@ import subprocess
 # verifie le type d'instalation
 # celon le PC redefini les commandes pour les faire fonctionner 
 # return 0 si ok 1+error si echec ou problem
-def install_instance(appName,typeOfInstall,path,aws,commandsToExecute,vsInstall,jsonConfig,jsonConfigPath):
+def install_instance(appName,typeOfInstall,path,commandsToExecute,vsInstall,jsonConfig,jsonConfigPath):
         if typeOfInstall == "PC":
-                pathInstall = path
+                # pathInstall = path
                 platform = platform.system()
                 if vsInstall == 'yes':
                         vscode_install(platform)
-                os.system(f'cd' + path)
+                execute_and_log(f'cd' + path)
                 if jsonConfig == 'yes':
-                        json_config(jsonConfigPath,platform,path)
+                        json_npm_config(jsonConfigPath,platform,path)
                 execute_commands(commandsToExecute,platform,appName)
         else:
                 return "aws pas encore pris en charge"
@@ -25,80 +26,105 @@ def install_instance(appName,typeOfInstall,path,aws,commandsToExecute,vsInstall,
 
 
 # Appel des fonction de aws dans le fichier aws_setup
-def call_aws_function() :
-        # creation + connection ec2 manque la gestion des params pour fonctionnement
-        call_ec2()
-        # lambda creation + alarm :  manque la gestion des params pour fonctionnement
-        call_lambda()
-        # network creation : manque gestions des params pour fonctionnement
-        create_network()
-        # create s3 + uniq bucket : manque gestion des params pour fonctionnement
-        call_s3()
+# def call_aws_function() :
+#         # creation + connection ec2 manque la gestion des params pour fonctionnement
+#         call_ec2()
+#         # lambda creation + alarm :  manque la gestion des params pour fonctionnement
+#         call_lambda()
+#         # network creation : manque gestions des params pour fonctionnement
+#         create_network()
+#         # create s3 + uniq bucket : manque gestion des params pour fonctionnement
+#         call_s3()
 
 # json config installation celon le systeme d'exploitation
 # install nodejs npm 
 # maybe add if folder not exist create folder
-def json_config(jsonConfigPath,plateform,path):
-        os.system("cp"+jsonConfigPath + path)
-        if plateform == "Linux":
-                try : 
-                        os.system('sudo pacman -S nodejs npm')
-                        os.system('npm install')
+
+def execute_and_log(command, log_file):
+    try:
+        output = subprocess.check_output(command, shell=True, text=True)
+        log_file.write(f'{command}\n')
+        log_file.write(output)
+        log_file.write('\n')
+        return True
+    except subprocess.CalledProcessError as e:
+        log_file.write(f'Error executing command: {command}\n')
+        log_file.write(f'Error message: {e}\n')
+        log_file.write('\n')
+        return False
+
+def json_npm_config(jsonConfigPath, plateform, path):
+        if execute_and_log('cp ' + jsonConfigPath + ' ' + path, log_file):    
+            if plateform == "Linux":
+                if distro.name() == 'Manjaro Linux':
+                    if execute_and_log('sudo pacman -S nodejs npm', log_file):
+                        execute_and_log('npm install', log_file)
                         return 0
-                except OSError as e:
-                        print("error installing dependencies")
-                        return 1,e
-        if plateform == "Windows":
-                try :
-                        os.system('choco install nodejs')
-                        os.system('choco install npm')
-                        os.system('npm install')
+                    else:
+                        return 1, "Error installing Manjaro dependencies"
+                if distro.name() == 'Ubuntu':
+                    if execute_and_log('sudo apt install nodejs', log_file) and \
+                       execute_and_log('sudo apt install npm', log_file):
+                        execute_and_log('npm install', log_file)
                         return 0
-                except OSError as e:
-                        print("error installing dependencies")
-                        return 1,e
-        if plateform == "Darwin":
-                try :
-                        os.system('brew install nodejs')
-                        os.system('brew install npm')
-                        os.system('npm install')
-                        return 0
-                except OSError as e:
-                        print("error installing dependencies")
-                        return 1,e
-        
+                    else:
+                        return 1, "Error installing Ubuntu dependencies"
+            if plateform == "Windows":
+                if execute_and_log('choco install nodejs', log_file) and \
+                   execute_and_log('choco install npm', log_file):
+                    execute_and_log('npm install', log_file)
+                    return 0
+                else:
+                    return 1, "Error installing Windows dependencies"
+            if plateform == "Darwin":
+                if execute_and_log('brew install nodejs', log_file) and \
+                   execute_and_log('brew install npm', log_file):
+                    execute_and_log('npm install', log_file)
+                    return 0
+                else:
+                    return 1, "Error installing Darwin dependencies"
+        else:
+            return 1, "Error copying config file"
 
 
 # VScode intallation celon le systeme d'exploitation
-def vscode_install(plateform):
+def vscode_install(plateform, log_file_path):
+    with open(log_file_path, 'a') as log_file:
         if plateform == "Linux":
-                try : 
-                        os.system('sudo pacman -S --needed git base-devel')
-                        os.system('git clone https://aur.archlinux.org/visual-studio-code-bin.git')
-                        os.system('cd visual-studio-code-bin')
-                        os.system('makepkg -si')
+            if distro.name() == 'Manjaro Linux':
+                if execute_and_log('sudo pacman -S --needed git base-devel', log_file) and \
+                   execute_and_log('git clone https://aur.archlinux.org/visual-studio-code-bin.git', log_file):
+                    if execute_and_log('cd visual-studio-code-bin', log_file) and \
+                       execute_and_log('makepkg -si', log_file):
                         return 0
-                except OSError as e:
-                        print("error while installing vscode")
-                        return 1,e
+                    else:
+                        return 1, "Error building VSCode package"
+                else:
+                    return 1, "Error installing Manjaro dependencies"
+                # yarn curl 
+            if distro.name() == 'Ubuntu':
+                if execute_and_log('sudo apt install git', log_file) and \
+                   execute_and_log('sudo apt install make', log_file) and \
+                   execute_and_log('sudo apt install visual-studio-code', log_file):
+                    return 0
+                else:
+                    return 1, "Error installing Ubuntu dependencies"
         if plateform == "Windows":
-                try :
-                        os.system('choco install git')
-                        os.system('choco install make')
-                        os.system('choco install visual-studio-code')
-                        return 0
-                except OSError as e:
-                        print("error while installing vscode")
-                        return 1,e
+            if execute_and_log('choco install git', log_file) and \
+               execute_and_log('choco install make', log_file) and \
+               execute_and_log('choco install visual-studio-code', log_file):
+                return 0
+            else:
+                return 1, "Error installing Windows dependencies"
         if plateform == "Darwin":
-                try :
-                        os.system('brew install git')
-                        os.system('brew install make')
-                        os.system('brew cask install visual-studio-code')
-                        return 0
-                except OSError as e:
-                        print("error while installing vscode")
-                        return 1,e
+            if execute_and_log('brew install git', log_file) and \
+               execute_and_log('brew install make', log_file) and \
+               execute_and_log('brew cask install visual-studio-code', log_file):
+                return 0
+            else:
+                return 1, "Error installing Darwin dependencies"
+    
+        return 1, "Unsupported platform"
 
 
 # Need to find settings.json path
@@ -112,8 +138,8 @@ def vscode_extensions_install(plateform,profileVsCode):
 #       python : 'npm i ......'
 # ]
 def get_commands(languagesDatas):
-        languagesDatas=['angular']
-        print(languagesDatas)
+        # languagesDatas=['angular']
+        # print(languagesDatas)
         commandsToExecute = []
         pth = os.path.abspath("json/config.json")
         print(pth)
@@ -129,12 +155,30 @@ def execute_commands(commandsToExecute,platform,app_name):
         for commands in commandsToExecute:
                 for command in commands:
                         toExecute = command.replace("{app-name}", app_name)
-                        try :
-                                os.system(toExecute)                               
-                        except OSError as e:
-                                print("error while executing the command")
-                                return 1,e
-                
+                        if platform == "Linux":
+                                if distro.name() == 'Manjaro Linux':
+                                        toExecute = toExecute.replace("sudo apt install", "sudo pacman -S")
+                                        if execute_and_log(toExecute, log_file) :
+                                                return 0
+                                        else :
+                                                return 1, "error executing Manjaro commands"
+                                if distro.name() == 'Ubuntu':
+                                        if execute_and_log(toExecute, log_file) :
+                                                return 0
+                                        else :
+                                                return 1, "error executing Ubuntu commands"
+                        if platform == "Windows":
+                                toExecute = toExecute.replace("sudo apt install", "choco install")
+                                if execute_and_log(toExecute, log_file) :
+                                        return 0
+                                else :
+                                        return 1, "error executing Windows commands"
+                        if platform == "Darwin":
+                                toExecute = toExecute.replace("sudo apt install", "brew install")
+                                if execute_and_log(toExecute, log_file) :
+                                        return 0
+                                else :
+                                        return 1, "error executing Darwin commands"
 # try des données d'entrées
 def sort_datas(jsonData):
         appName = jsonData["nom-module"]["actions"][0]["params"]['app-name']
@@ -148,15 +192,41 @@ def sort_datas(jsonData):
         jsonConfigPath = jsonData["nom-module"]["actions"][0]["params"]['json-config-path']
         return appName,typeOfInstall,pathOfInstall,awsDatas,languagesDatas,vsInstall,jsonConfig,jsonConfigPath
 
+def docker_install():
+    if platform.system() == 'Linux':
+        if distro.name() == 'Manjaro Linux':
+                if execute_and_log('sudo pacman -S docker', log_file) :
+                     return 0
+                else :
+                    return 1, "error installing docker"
+        if distro.name() == 'Ubuntu':
+             if execute_and_log('sudo apt-get update', log_file) and \
+             execute_and_log('sudo apt install docker.io', log_file) :
+                    return 0
+             else :
+                    return 1, "error installing docker"
+        if platform.system() == 'Windows':
+            if execute_and_log('choco install docker', log_file) :
+                return 0
+            else :
+                return 1, "error installing docker"
+        if platform.system() == 'Darwin':
+            if execute_and_log('brew install docker', log_file) :
+                return 0
+            else :
+                return 1, "error installing docker"
+
+
+
 # main ou apppel des fonction dans le bon ordre
+# mintlify
 if __name__ == '__main__':
         pth = os.path.abspath("json/front_datas.json")
+        logpth = os.path.abspath("logs/log.txt")
         with open(pth) as json_file:
                 jsonData = json.load(json_file)
         sortedDatas =sort_datas(jsonData)   
         commandsToExecute = get_commands(sortedDatas[4])
-        # execute_commands(commandsToExecute,"",sortedDatas[0])
-        install_instance(sortedDatas[0],sortedDatas[1],sortedDatas[2],sortedDatas[3],commandsToExecute,sortedDatas[5],sortedDatas[6],sortedDatas[7])
-                
-
-        
+        with open(logpth, 'a') as log_file:
+                # execute_commands(commandsToExecute,"",sortedDatas[0],logpth)
+                install_instance(sortedDatas[0],sortedDatas[1],sortedDatas[2],sortedDatas[3],commandsToExecute,sortedDatas[5],sortedDatas[6],sortedDatas[7])
