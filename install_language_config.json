@@ -1,0 +1,157 @@
+{
+    "languages": [
+      {
+        "name": "Python",
+        "version": "3.9.6",
+        "install_command": {
+          "Linux": "sudo apt install python3=3.9.6",
+          "macOS": "brew install python3",
+          "Windows": "choco install python --version 3.9.6"
+        }
+      },
+      {
+        "name": "angularjs",
+        "version": "",
+        "install_command": {
+          "Linux": "npm install -g angular@latest",
+          "macOS": "brew install -g angular@latest",
+          "Windows": "npm install -g angular@latest"
+        }
+      },
+      {
+        "name": "vuejs",
+        "version": "",
+        "install_command": {
+          "Linux": "npm install -g vue@latest",
+          "macOS": "brew install -g vue@latest",
+          "Windows": "npm install -g vue@latest"
+        }
+      },
+      {
+        "name": "symfony",
+        "version": "",
+        "install_command": {
+          "Linux": "composer global require symfony/symfony",
+          "macOS": "composer global require symfony/symfony",
+          "Windows": "composer global require symfony/symfony"
+        }
+      },
+      {
+        "name": "C#",
+        "version": "",
+        "install_command": {
+          "Windows": "choco install dotnet-sdk"
+        }
+      },
+      {
+        "name": "Java",
+        "version": "11",
+        "install_command": {
+          "Linux": "sudo apt install openjdk-11-jdk",
+          "macOS": "brew install openjdk@11",
+          "Windows": "choco install openjdk11"
+        }
+      },
+      {
+        "name": "PHP",
+        "version": "7.4",
+        "install_command": {
+          "Linux": "sudo apt install php7.4=7.4.12",
+          "macOS": "brew install php@7.4=7.4.12",
+          "Windows": "choco install php --version 7.4.12"
+        }
+      },
+      {
+        "name": "C++",
+        "version": "",
+        "install_command": {
+          "Linux": "sudo apt install g++",
+          "macOS": "brew install gcc",
+          "Windows": "choco install mingw"
+        }
+      },
+      {
+        "name": "C",
+        "version": "",
+        "install_command": {
+          "Linux": "sudo apt install gcc",
+          "macOS": "brew install gcc",
+          "Windows": "choco install mingw"
+        }
+      },
+      
+      {
+        "name": "React",
+        "version": "",
+        "install_command": {
+          "Linux": "npm install -g create-react-app",
+          "macOS": "npm install -g create-react-app",
+          "Windows": "npm install -g create-react-app"
+        }
+      },
+      {
+        "name": "Nodejs",
+        "version": "14",
+        "install_command": {
+          "Linux": "curl -fsSL https://deb.nodesource.com/setup_14.x | sudo -E bash - && sudo apt install -y nodejs",
+          "macOS": "brew install node@14",
+          "Windows": "choco install nodejs.install --version 14.17.6"
+        }
+      },
+      {
+        "name": "Laravel",
+        "version": "",
+        "install_command": {
+          "Linux": "composer global require laravel/installer",
+          "macOS": "composer global require laravel/installer",
+          "Windows": "composer global require laravel/installer"
+        }
+      },
+      {
+        "name": "Spring",
+        "version": "",
+        "install_command": {
+          "Linux": "sdk install springboot",
+          "macOS": "brew tap pivotal/tap && brew install springboot",
+          "Windows": "choco install springtools"
+        }
+      },
+      {
+        "name": "Express",
+        "version": "",
+        "install_command": {
+          "Linux": "npm install -g express-generator",
+          "macOS": "npm install -g express-generator",
+          "Windows": "npm install -g express-generator"
+        }
+      },
+      {
+        "name": "Bootstrap",
+        "version": "",
+        "install_command": {
+          "Linux": "npm install -g bootstrap",
+          "macOS": "npm install -g bootstrap",
+          "Windows": "npm install -g bootstrap"
+        }
+      },
+      {
+        "name": "Swift",
+        "version": "5.5",
+        "install_command": {
+          "Linux": "Not supported on Linux",
+          "macOS": "brew install swift@5.5",
+          "Windows": "Not supported on Windows"
+        }
+      },
+      {
+        "name": "React-Native",
+        "version": "",
+        "install_command": {
+          "Linux": "npm install -g react-native-cli",
+          "macOS": "npm install -g react-native-cli",
+          "Windows": "npm install -g react-native-cli"
+        }
+      }
+    ]
+  }
+  
