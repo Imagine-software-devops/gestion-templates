@@ -1,0 +1,18 @@
+{
+    "language": "python",
+    "template": {
+      "name": "Basic Function",
+      "description": "A basic template for creating a function",
+      "code": "def {{ function_name }}({{ parameters }}):\n    {{ cursor }}"
+    },
+    "placeholders": {
+      "function_name": {
+        "prompt": "Enter function name: ",
+        "default": "my_function"
+      },
+      "parameters": {
+        "prompt": "Enter parameters (comma-separated): "
+      }
+    }
+  }
+  
