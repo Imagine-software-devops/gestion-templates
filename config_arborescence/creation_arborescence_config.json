@@ -1,0 +1,33 @@
+{
+    "nom": "dossier_principal",
+    "type": "dossier",
+    "contenu": [
+        {
+            "nom": "sous_dossier_1",
+            "type": "dossier",
+            "contenu": [
+                {
+                    "nom": "fichier_1.txt",
+                    "type": "fichier",
+                    "contenu": "Contenu du fichier 1"
+                },
+                {
+                    "nom": "fichier_2.txt",
+                    "type": "fichier",
+                    "contenu": "Contenu du fichier 2"
+                }
+            ]
+        },
+        {
+            "nom": "sous_dossier_2",
+            "type": "dossier",
+            "contenu": [
+                {
+                    "nom": "fichier_3.txt",
+                    "type": "fichier",
+                    "contenu": "Contenu du fichier 3"
+                }
+            ]
+        }
+    ]
+}
