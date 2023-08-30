@@ -181,12 +181,13 @@ def get_commands(languagesDatas):
         :return: a list of commands to execute based on the input languagesDatas.
         """
         commandsToExecute = []
-        pth = os.path.abspath("json/config.json")
+        pth = os.path.abspath("gestion-templates/json/config.json")
         print(pth)
         with open(pth) as json_file:
                 jsoncommands = json.load(json_file)
-        for language in languagesDatas:      
-                commandsToExecute.append(jsoncommands[language])        
+                for language in languagesDatas:      
+                        commandsToExecute.append(jsoncommands[languagesDatas])   
+                        print(commandsToExecute)     
         return commandsToExecute
 
 def execute_commands(commandsToExecute,platform,app_name):
@@ -247,12 +248,12 @@ def sort_datas(jsonData):
     typeOfInstall = jsonData["nom-module"]["actions"][0]["params"]['type-of-install']
     pathOfInstall = jsonData["nom-module"]["actions"][0]["params"]['path-of-install']
     awsDatas= jsonData["nom-module"]["actions"][0]["params"]['server-datas']
-    languagesDatas = jsonData["nom-module"]["actions"][0]["params"]['which-language']
+    languagesDatas = "angular"
     vsInstall = jsonData["nom-module"]["actions"][0]["params"]['vscode']
     jsonConfig = jsonData["nom-module"]["actions"][0]["params"]['json-config']
     jsonConfigPath = jsonData["nom-module"]["actions"][0]["params"]['json-config-path']
-    dockerInstall = jsonData["nom-module"]["actions"][0]["params"]['docker-install']
-    return appName,typeOfInstall,pathOfInstall,awsDatas,languagesDatas,vsInstall,jsonConfig,jsonConfigPath,dockerInstall
+    # dockerInstall = jsonData["nom-module"]["actions"][0]["params"]['docker-install']
+    return appName,typeOfInstall,pathOfInstall,awsDatas,languagesDatas,vsInstall,jsonConfig,jsonConfigPath
 
 def docker_install(plateform):
     """
@@ -286,11 +287,11 @@ def docker_install(plateform):
 
 # The above code is a Python script that performs the following actions:
 if __name__ == '__main__':
-        pth = os.path.abspath("json/front_datas.json")
+        pth = os.path.abspath("gestion-templates/json/front_datas.json")
         logpth = os.path.abspath("logs/log.txt")
         with open(pth) as json_file:
                 jsonData = json.load(json_file)
         sortedDatas =sort_datas(jsonData)   
         commandsToExecute = get_commands(sortedDatas[4])
-        with open(logpth, 'a') as log_file:
-                install_instance(sortedDatas[0],sortedDatas[1],sortedDatas[2],sortedDatas[3],commandsToExecute,sortedDatas[5],sortedDatas[6],sortedDatas[7],sortedDatas[8])
+        # with open(logpth, 'a') as log_file:
+        #         install_instance(sortedDatas[0],sortedDatas[1],sortedDatas[2],sortedDatas[3],commandsToExecute,sortedDatas[5],sortedDatas[6],sortedDatas[7],sortedDatas[8])
